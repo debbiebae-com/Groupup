@@ -7,6 +7,7 @@ import { GroupCard } from "@/components/groups/GroupCard";
 import { CreateGroupModal } from "@/components/groups/CreateGroupModal";
 import { GroupAgreementTemplate } from "@/components/groups/GroupAgreementTemplate";
 import { GroupChat } from "@/components/groups/GroupChat";
+import { VideoCallContainer } from "@/components/video/VideoCallContainer";
 
 export default function GroupsPage() {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -60,7 +61,8 @@ export default function GroupsPage() {
                 Close
               </button>
             </div>
-            <div className="mt-4">
+            <div className="mt-4 space-y-4">
+              <VideoCallContainer groupId={activeGroup.id} groupName={activeGroup.name} />
               <GroupChat groupId={activeGroup.id} />
             </div>
           </div>
