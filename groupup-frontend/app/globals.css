@@ -46,6 +46,10 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --color-match-amber: var(--match-amber);
+  --color-verified-teal: var(--verified-teal);
+  --color-swipe-accept: var(--swipe-accept);
+  --color-swipe-reject: var(--swipe-reject);
 }
 
 :root {
@@ -67,6 +71,10 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  --match-amber: oklch(0.79 0.16 68);
+  --verified-teal: oklch(0.72 0.11 183);
+  --swipe-accept: oklch(0.68 0.19 150);
+  --swipe-reject: oklch(0.577 0.245 27.325);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -102,6 +110,10 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+  --match-amber: oklch(0.82 0.16 75);
+  --verified-teal: oklch(0.75 0.11 183);
+  --swipe-accept: oklch(0.72 0.19 150);
+  --swipe-reject: oklch(0.704 0.191 22.216);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
