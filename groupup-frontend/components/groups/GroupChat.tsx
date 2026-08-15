@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Message } from "@/types/api";
 import { getMessages, sendMessage } from "@/lib/api";
 import { useAuthStore } from "@/lib/store";
+import { getSocket } from "@/lib/socket/client";
 import { MessageBubble } from "./MessageBubble";
 
 export function GroupChat({ groupId }: { groupId: string }) {
@@ -12,7 +13,33 @@ export function GroupChat({ groupId }: { groupId: string }) {
   const userId = useAuthStore((s) => s.user?.id);
 
   useEffect(() => {
-    getMessages(groupId).then((res) => setMessages(res.messages));
+    let cancelled = false;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    function load() {
+      getMessages(groupId).then((res) => {
+        if (!cancelled) setMessages(res.messages);
+      });
+    }
+
+    const socket = getSocket();
+    if (socket) {
+      // Real mode: subscribe to message events, no polling
+      socket.on("message", (event: { groupId: string }) => {
+        if (event.groupId === groupId) load();
+      });
+      load();
+    } else {
+      // Mock mode: poll every 5s
+      load();
+      interval = setInterval(load, 5000);
+    }
+
+    return () => {
+      cancelled = true;
+      if (interval) clearInterval(interval);
+      if (socket) socket.off("message");
+    };
   }, [groupId]);
 
   async function submit(e: React.FormEvent) {
