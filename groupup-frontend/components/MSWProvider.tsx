@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
+import { useAuthStore } from "@/lib/store";
 
 export function MSWProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
@@ -10,6 +11,7 @@ export function MSWProvider({ children }: { children: React.ReactNode }) {
       import("../lib/mocks/browser").then(async ({ worker }) => {
         await worker.start({ onUnhandledRequest: "bypass" });
         setReady(true);
+        useAuthStore.getState().hydrate();
       });
     } else {
       setReady(true);

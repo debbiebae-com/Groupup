@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { create } from "zustand";
 import type { User } from "@/types/api";
@@ -13,6 +13,7 @@ interface AuthState {
   tier: 1 | 2 | 3;
   setUser: (user: User) => void;
   setToken: (token: string | null) => void;
+  hydrate: () => Promise<void>;
   verifyEmail: (email: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
 }
@@ -32,6 +33,26 @@ export const useAuthStore = create<AuthState>()((set) => ({
     }),
 
   setToken: (token) => set({ token }),
+
+  hydrate: async () => {
+    set({ loading: true });
+    try {
+      const res = await fetch(`${API_URL}/auth/me`);
+      if (res.ok) {
+        const data = await res.json();
+        set({
+          user: data.user,
+          isVerified: data.user.verificationStatus === "VERIFIED",
+          tier: data.user.tier,
+          token: data.token ?? null,
+        });
+      }
+    } catch {
+      // user stays unauthenticated
+    } finally {
+      set({ loading: false });
+    }
+  },
 
   verifyEmail: async (email) => {
     set({ loading: true });
