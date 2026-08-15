@@ -56,8 +56,23 @@ export const handlers = [
   http.put("/api/profiles/me", async ({ request }) => {
     await delay(LATENCY);
     const body = (await request.json()) as Partial<Profile>;
-    const idx = db.profiles.findIndex((p) => p.id === db.currentUser.id);
-    const updated = { ...(idx >= 0 ? db.profiles[idx] : { id: db.currentUser.id }), ...body };
+    const base: Profile = {
+      id: db.currentUser.id,
+      userId: db.currentUser.id,
+      displayName: db.currentUser.displayName,
+      bio: "",
+      avatarUrl: null,
+      cleanliness: 5,
+      socialEnergy: 5,
+      sleepSchedule: "FLEXIBLE",
+      nonNegotiables: [],
+      budget: { min: 0, max: 0, currency: "USD" },
+      groupIntent: "SOLO_NEW",
+      university: "National University",
+      campus: "Main Campus",
+    };
+    const idx = db.profiles.findIndex((p) => p.id === base.id);
+    const updated: Profile = { ...base, ...body };
     if (idx >= 0) db.profiles[idx] = updated;
     else db.profiles.push(updated);
     return HttpResponse.json({ profile: updated });
@@ -155,3 +170,4 @@ export const handlers = [
     return HttpResponse.json({ ok: true });
   }),
 ];
+
