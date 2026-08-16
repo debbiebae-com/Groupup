@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+}
+
+enum GroupIntent {
+  SOLO_NEW
+  PAIR_ADD
+  SOLO_JOIN
+}
+
+enum SleepSchedule {
+  EARLY_BIRD
+  NIGHT_OWL
+  FLEXIBLE
+}
+
+enum SwipeAction {
+  LIKE
+  PASS
+}
+
+model User {
+  id                 String             @id @default(cuid())
+  email              String             @unique
+  passwordHash       String
+  displayName        String
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  tier               Int                @default(1)
+  badges             String[]           @default([])
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  profile          Profile?
+  swipesMade       Swipe[]        @relation("SwipesMade")
+  groupMemberships GroupMember[]
+  messages         Message[]
+}
+
+model VerificationToken {
+  id        String    @id @default(cuid())
+  email     String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([email])
+}
+
+model Profile {
+  id             String        @id @default(cuid())
+  userId         String        @unique
+  displayName    String
+  bio            String        @default("")
+  avatarUrl      String?
+  cleanliness    Int
+  socialEnergy   Int
+  sleepSchedule  SleepSchedule @default(FLEXIBLE)
+  nonNegotiables String[]      @default([])
+  budgetMin      Int
+  budgetMax      Int
+  budgetCurrency String        @default("USD")
+  groupIntent    GroupIntent   @default(SOLO_NEW)
+  university     String
+  campus         String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Swipe {
+  id              String      @id @default(cuid())
+  swiperId        String
+  targetProfileId String
+  action          SwipeAction
+  createdAt       DateTime    @default(now())
+
+  swiper User @relation("SwipesMade", fields: [swiperId], references: [id], onDelete: Cascade)
+
+  @@index([swiperId, targetProfileId])
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  userAId   String
+  userBId   String
+  createdAt DateTime @default(now())
+
+  @@unique([userAId, userBId])
+  @@index([userAId])
+  @@index([userBId])
+}
+
+model Group {
+  id        String        @id @default(cuid())
+  name      String
+  intent    String        @default("SOLO_NEW")
+  createdAt DateTime      @default(now())
+
+  members  GroupMember[]
+  messages Message[]
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  groupId   String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  group  Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  sender User  @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+}
