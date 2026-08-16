@@ -1,6 +1,8 @@
 import { sendOffer, sendAnswer } from "@/lib/api/signaling";
 
-const USE_MOCK = process.env.USE_MOCK_API === "true";
+const USE_MOCK =
+  process.env.NODE_ENV === "development" ||
+  process.env.NEXT_PUBLIC_USE_MOCK_API === "true";
 
 export class SignalingService {
   static async offer(groupId: string, sdp: string): Promise<void> {
@@ -8,7 +10,7 @@ export class SignalingService {
       await sendOffer(groupId, sdp);
       return;
     }
-    // Real mode: Socket.io signaling (wired in F013)
+    // Real mode: Socket.io signaling (wired when backend is deployed)
     throw new Error("Real signaling not configured");
   }
 

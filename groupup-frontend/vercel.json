@@ -1,0 +1,7 @@
+{
+  "env": {
+    "NEXT_PUBLIC_API_URL": "/api",
+    "USE_MOCK_API": "true",
+    "NEXT_PUBLIC_USE_MOCK_API": "true"
+  }
+}

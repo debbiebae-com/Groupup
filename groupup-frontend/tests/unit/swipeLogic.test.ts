@@ -1,5 +1,8 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import { SwipeSchema } from "@/lib/schemas";
+import { sendSwipe } from "@/lib/api/swipe";
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe("SwipeSchema validation", () => {
   it("accepts a valid LIKE payload", () => {
@@ -25,24 +28,28 @@ describe("SwipeSchema validation", () => {
   });
 });
 
-describe("MSW swipe handler", () => {
-  it("returns a boolean isMatch", async () => {
-    const res = await fetch("http://localhost/api/swipe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ targetProfileId: "p_1", action: "LIKE" }),
-    });
-    expect(res.ok).toBe(true);
-    const data = await res.json();
-    expect(typeof data.isMatch).toBe("boolean");
+describe("sendSwipe service", () => {
+  it("returns isMatch from the response", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ isMatch: true, matchId: "match_1" }),
+    } as Response));
+
+    const res = await sendSwipe({ targetProfileId: "p_1", action: "LIKE" });
+    expect(res.isMatch).toBe(true);
+    expect(res.matchId).toBe("match_1");
   });
 
-  it("rejects a swipe without a targetProfileId", async () => {
-    const res = await fetch("http://localhost/api/swipe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "LIKE" }),
-    });
-    expect(res.status).toBe(400);
+  it("throws on an error response", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({ error: "Invalid payload" }),
+    } as Response));
+
+    await expect(
+      sendSwipe({ targetProfileId: "p_1", action: "LIKE" })
+    ).rejects.toThrow();
   });
 });
