@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { env } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import { authRouter } from "./modules/auth/auth.routes.js";
 
 export function createApp() {
   const app = express();
@@ -13,8 +14,7 @@ export function createApp() {
     res.json({ status: "ok", service: "groupup-backend", env: env.NODE_ENV });
   });
 
-  // Modules will be mounted here (Phase 2+):
-  // app.use("/api/auth", authRouter);
+  app.use("/api/auth", authRouter);
 
   app.use(errorHandler);
   return app;
