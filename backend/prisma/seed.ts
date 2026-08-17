@@ -31,7 +31,12 @@ async function main() {
   // --- Demo user (easy login) ---
   const demo = await prisma.user.upsert({
     where: { email: "demo@university.edu" },
-    update: {},
+    update: {
+      passwordHash,
+      verificationStatus: "VERIFIED",
+      tier: 3,
+      badges: ["verified_student", "id_checked"],
+    },
     create: {
       email: "demo@university.edu",
       passwordHash,
