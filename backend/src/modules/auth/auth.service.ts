@@ -4,6 +4,7 @@ import { prisma } from "../../lib/prisma.js";
 import { env } from "../../config/env.js";
 import { Errors } from "../../lib/errors.js";
 import { generateToken, sha256 } from "../../lib/crypto.js";
+import { sendVerificationEmail } from "../../lib/email.js";
 import type { RegisterInput, LoginInput, ConfirmVerifyInput } from "./auth.schema.js";
 
 const VERIFICATION_TOKEN_TTL_MS = 15 * 60 * 1000;
@@ -75,7 +76,8 @@ export async function requestVerification(email: string) {
     },
   });
 
-  return { message: "Verification token issued", devToken: rawToken, expiresInMinutes: 15 };
+  const emailResult = await sendVerificationEmail(email, rawToken);
+  return { message: "Verification token issued", expiresInMinutes: 15, ...emailResult };
 }
 
 export async function confirmVerification(input: ConfirmVerifyInput) {
