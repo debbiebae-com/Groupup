@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma.js";
+import { getIo } from "../../socket/index.js";
 import { Errors } from "../../lib/errors.js";
 import type { CreateGroupInput, SendMessageInput } from "./group.schema.js";
 
@@ -80,5 +81,6 @@ export async function sendMessage(userId: string, input: SendMessageInput) {
       content: input.content,
     },
   });
+  getIo()?.to(`group:${input.groupId}`).emit("message", { groupId: input.groupId, message });
   return { message };
 }
