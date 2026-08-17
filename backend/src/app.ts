@@ -5,6 +5,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
 import { profileRouter } from "./modules/profile/profile.routes.js";
 import { swipeRouter, matchRouter } from "./modules/swipe/swipe.routes.js";
+import { groupRouter, messageRouter } from "./modules/group/group.routes.js";
 
 export function createApp() {
   const app = express();
@@ -20,6 +21,8 @@ export function createApp() {
   app.use("/api/profiles", profileRouter);
   app.use("/api/swipe", swipeRouter);
   app.use("/api/matches", matchRouter);
+  app.use("/api/groups", groupRouter);
+  app.use("/api/messages", messageRouter);
 
   app.use(errorHandler);
   return app;
