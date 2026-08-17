@@ -3,6 +3,7 @@ import cors from "cors";
 import { env } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
+import { profileRouter } from "./modules/profile/profile.routes.js";
 
 export function createApp() {
   const app = express();
@@ -15,6 +16,7 @@ export function createApp() {
   });
 
   app.use("/api/auth", authRouter);
+  app.use("/api/profiles", profileRouter);
 
   app.use(errorHandler);
   return app;
