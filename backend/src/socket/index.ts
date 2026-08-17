@@ -41,6 +41,14 @@ export function initSocket(httpServer: HttpServer): Server {
       }
     });
 
+    socket.on("offer", (data: { groupId: string; sdp: unknown }) => {
+      socket.to(`group:${data.groupId}`).emit("offer", { from: userId, sdp: data.sdp });
+    });
+
+    socket.on("answer", (data: { groupId: string; sdp: unknown }) => {
+      socket.to(`group:${data.groupId}`).emit("answer", { from: userId, sdp: data.sdp });
+    });
+
     socket.on("disconnect", () => {
       console.log(`[socket] user ${userId} disconnected`);
     });

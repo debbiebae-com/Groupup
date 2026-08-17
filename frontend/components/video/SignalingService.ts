@@ -1,24 +1,24 @@
-import { sendOffer, sendAnswer } from "@/lib/api/signaling";
-
-const USE_MOCK =
-  process.env.NODE_ENV === "development" ||
-  process.env.NEXT_PUBLIC_USE_MOCK_API === "true";
+import { getSocket } from "@/lib/socket/client";
 
 export class SignalingService {
   static async offer(groupId: string, sdp: string): Promise<void> {
-    if (USE_MOCK) {
-      await sendOffer(groupId, sdp);
+    const socket = getSocket();
+    if (socket) {
+      socket.emit("offer", { groupId, sdp });
       return;
     }
-    // Real mode: Socket.io signaling (wired when backend is deployed)
-    throw new Error("Real signaling not configured");
+    // Fallback: REST mock signaling (MSW)
+    const { sendOffer } = await import("@/lib/api/signaling");
+    await sendOffer(groupId, sdp);
   }
 
   static async answer(groupId: string, sdp: string): Promise<void> {
-    if (USE_MOCK) {
-      await sendAnswer(groupId, sdp);
+    const socket = getSocket();
+    if (socket) {
+      socket.emit("answer", { groupId, sdp });
       return;
     }
-    throw new Error("Real signaling not configured");
+    const { sendAnswer } = await import("@/lib/api/signaling");
+    await sendAnswer(groupId, sdp);
   }
 }
