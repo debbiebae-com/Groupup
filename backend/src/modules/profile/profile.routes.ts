@@ -22,19 +22,18 @@ profileRouter.put("/me", requireAuth, async (req: AuthedRequest, res, next) => {
   }
 });
 
-profileRouter.get("/", async (req, res, next) => {
+profileRouter.get("/", requireAuth, async (req: AuthedRequest, res, next) => {
   try {
     const filters = profileFiltersSchema.parse(req.query);
-    const excludeUserId = (req as AuthedRequest).userId;
-    res.json(await service.listProfiles(filters, excludeUserId));
+    res.json(await service.listProfiles(filters, req.userId));
   } catch (e) {
     next(e);
   }
 });
 
-profileRouter.get("/:id", async (req, res, next) => {
+profileRouter.get("/:id", requireAuth, async (req: AuthedRequest, res, next) => {
   try {
-    res.json(await service.getProfileById(req.params.id));
+    res.json(await service.getProfileById(String(req.params.id)));
   } catch (e) {
     next(e);
   }
