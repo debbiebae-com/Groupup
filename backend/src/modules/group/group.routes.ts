@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { requireAuth, type AuthedRequest } from "../../middleware/auth.js";
+import { requireTier } from "../../middleware/tier.js";
 import * as service from "./group.service.js";
 import { createGroupSchema, sendMessageSchema } from "./group.schema.js";
 
 export const groupRouter = Router();
 export const messageRouter = Router();
 
-groupRouter.post("/", requireAuth, async (req: AuthedRequest, res, next) => {
+groupRouter.post("/", requireAuth, requireTier(3), async (req: AuthedRequest, res, next) => {
   try {
     const input = createGroupSchema.parse(req.body);
     res.status(201).json(await service.createGroup(req.userId!, input));
@@ -15,7 +16,7 @@ groupRouter.post("/", requireAuth, async (req: AuthedRequest, res, next) => {
   }
 });
 
-groupRouter.get("/", requireAuth, async (req: AuthedRequest, res, next) => {
+groupRouter.get("/", requireAuth, requireTier(2), async (req: AuthedRequest, res, next) => {
   try {
     res.json(await service.getMyGroups(req.userId!));
   } catch (e) {
@@ -23,7 +24,7 @@ groupRouter.get("/", requireAuth, async (req: AuthedRequest, res, next) => {
   }
 });
 
-groupRouter.get("/:id", requireAuth, async (req: AuthedRequest, res, next) => {
+groupRouter.get("/:id", requireAuth, requireTier(2), async (req: AuthedRequest, res, next) => {
   try {
     res.json(await service.getGroupById(req.userId!, String(req.params.id)));
   } catch (e) {
@@ -31,7 +32,7 @@ groupRouter.get("/:id", requireAuth, async (req: AuthedRequest, res, next) => {
   }
 });
 
-messageRouter.get("/", requireAuth, async (req: AuthedRequest, res, next) => {
+messageRouter.get("/", requireAuth, requireTier(2), async (req: AuthedRequest, res, next) => {
   try {
     const groupId = String(req.query.groupId ?? "");
     res.json(await service.getMessages(req.userId!, groupId));
@@ -40,7 +41,7 @@ messageRouter.get("/", requireAuth, async (req: AuthedRequest, res, next) => {
   }
 });
 
-messageRouter.post("/", requireAuth, async (req: AuthedRequest, res, next) => {
+messageRouter.post("/", requireAuth, requireTier(2), async (req: AuthedRequest, res, next) => {
   try {
     const input = sendMessageSchema.parse(req.body);
     res.status(201).json(await service.sendMessage(req.userId!, input));
