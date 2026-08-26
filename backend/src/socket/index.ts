@@ -6,6 +6,13 @@ import { prisma } from "../lib/prisma.js";
 
 let io: Server | null = null;
 
+async function isMember(userId: string, groupId: string): Promise<boolean> {
+  const membership = await prisma.groupMember.findUnique({
+    where: { groupId_userId: { groupId, userId } },
+  });
+  return !!membership;
+}
+
 export function initSocket(httpServer: HttpServer): Server {
   io = new Server(httpServer, {
     cors: { origin: env.CORS_ORIGIN === "*" ? true : env.CORS_ORIGIN },
@@ -31,6 +38,11 @@ export function initSocket(httpServer: HttpServer): Server {
 
     socket.on("message", async (data: { groupId: string; content: string }, ack?: (r: unknown) => void) => {
       try {
+        const ok = await isMember(userId, data.groupId);
+        if (!ok) {
+          console.warn(`[socket] REJECTED message: user ${userId} not in group ${data.groupId}`);
+          return ack?.({ ok: false, error: "not a member" });
+        }
         const msg = await prisma.message.create({
           data: { groupId: data.groupId, senderId: userId, content: data.content },
         });
@@ -41,11 +53,21 @@ export function initSocket(httpServer: HttpServer): Server {
       }
     });
 
-    socket.on("offer", (data: { groupId: string; sdp: unknown }) => {
+    socket.on("offer", async (data: { groupId: string; sdp: unknown }) => {
+      const ok = await isMember(userId, data.groupId);
+      if (!ok) {
+        console.warn(`[socket] REJECTED offer: user ${userId} not in group ${data.groupId}`);
+        return;
+      }
       socket.to(`group:${data.groupId}`).emit("offer", { from: userId, sdp: data.sdp });
     });
 
-    socket.on("answer", (data: { groupId: string; sdp: unknown }) => {
+    socket.on("answer", async (data: { groupId: string; sdp: unknown }) => {
+      const ok = await isMember(userId, data.groupId);
+      if (!ok) {
+        console.warn(`[socket] REJECTED answer: user ${userId} not in group ${data.groupId}`);
+        return;
+      }
       socket.to(`group:${data.groupId}`).emit("answer", { from: userId, sdp: data.sdp });
     });
 
