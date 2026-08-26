@@ -19,23 +19,23 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="text-lg font-semibold tracking-tight">
+        <div className="flex min-w-0 items-center gap-4">
+          <Link href="/" className="shrink-0 text-lg font-semibold tracking-tight">
             GroupUp
           </Link>
-          <nav className="hidden items-center gap-4 sm:flex">
+          <nav className="flex items-center gap-3 overflow-x-auto text-sm">
             {links.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm text-muted-foreground hover:text-foreground"
+                className="shrink-0 text-muted-foreground hover:text-foreground"
               >
                 {l.label}
               </Link>
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-3">
           {user ? (
             <>
               <VerificationBadge />
