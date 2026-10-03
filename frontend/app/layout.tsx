@@ -1,23 +1,12 @@
-﻿import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next";
 import "./globals.css";
 import { MSWProvider } from "@/components/MSWProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "GroupUp",
-  description: "Roommate group coordination for continuing university students",
+  title: "GroupUp — Find your people, find your place",
+  description: "A more human way for university students to find compatible roommates and form a home together.",
 };
 
 export default function RootLayout({
@@ -27,12 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
-      >
+      <body className="min-h-screen bg-background font-sans antialiased">
         <MSWProvider>
           <Navbar />
-          <main className="flex-1">{children}</main>
+          <main className="min-h-[calc(100vh-150px)] pb-20 lg:pb-0">{children}</main>
           <Footer />
         </MSWProvider>
       </body>

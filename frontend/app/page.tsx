@@ -1,103 +1,169 @@
 import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  BadgeCheck,
+  HeartHandshake,
+  House,
+  MessageCircleHeart,
+  Sparkles,
+  UsersRound,
+} from "lucide-react";
+
+const heroImage = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=88";
+const faces = [
+  { name: "Maya", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80" },
+  { name: "Theo", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=160&q=80" },
+  { name: "Nia", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=160&q=80" },
+  { name: "Leo", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=160&q=80" },
+];
+
+const features = [
+  {
+    icon: HeartHandshake,
+    title: "Chemistry before square footage",
+    body: "Find people who fit your routines, budget and idea of home—not just an empty room.",
+    color: "bg-[#fff0f2] text-[#db4969]",
+  },
+  {
+    icon: UsersRound,
+    title: "Build your circle",
+    body: "Meet one roommate or bring a few good matches together to form a group.",
+    color: "bg-[#f1eaff] text-[#8952c5]",
+  },
+  {
+    icon: MessageCircleHeart,
+    title: "Talk the real stuff through",
+    body: "Compare habits, align on expectations and get to know each other before you commit.",
+    color: "bg-[#fff3df] text-[#ce8a31]",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="overflow-hidden">
+      <section className="mx-auto grid max-w-[1380px] items-center gap-10 px-4 pb-16 pt-10 sm:px-6 sm:pt-14 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12 lg:pb-24 lg:pt-16">
+        <div className="relative z-10 max-w-[610px]">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#f1e1dc] bg-white/80 px-3.5 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#8a5c56] shadow-sm">
+            <span className="instagram-gradient h-2 w-2 rounded-full" />
+            Roommate matching, with more heart
+          </div>
+          <h1 className="text-[clamp(3.1rem,7vw,6.25rem)] font-black leading-[0.97] tracking-[-0.075em] text-[#282624]">
+            Find your
+            <br />
+            people. Find
+            <br />
+            your <span className="text-gradient">place.</span>
+          </h1>
+          <p className="mt-7 max-w-[490px] text-base leading-7 text-[#77716f] sm:text-lg sm:leading-8">
+            The best home starts with the right people. Meet students who share your rhythm, build a roommate group and make campus feel a little more like yours.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/profiles"
+              className="instagram-gradient inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold text-white shadow-[0_12px_24px_rgba(226,67,105,0.22)] transition hover:-translate-y-0.5"
+            >
+              Meet your people <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/login?mode=register"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-[#e8e2de] bg-white px-6 py-3.5 text-sm font-bold text-[#383330] shadow-sm transition hover:border-[#ef9e9c] hover:bg-[#fffafa]"
+            >
+              <Sparkles className="h-4 w-4 text-[#e45a70]" />
+              Create your profile
+            </Link>
+          </div>
+          <div className="mt-9 flex items-center gap-4">
+            <div className="flex -space-x-3">
+              {faces.map((face, index) => (
+                <div key={face.name} className="relative h-10 w-10 overflow-hidden rounded-full border-[3px] border-[#f7f6f4] shadow-sm" style={{ zIndex: faces.length - index }}>
+                  <Image src={face.image} alt={face.name} fill sizes="40px" unoptimized className="object-cover" />
+                </div>
+              ))}
+            </div>
+            <div>
+              <p className="text-sm font-bold text-[#383330]">Good people make a good home.</p>
+              <p className="mt-0.5 text-xs text-[#918b87]">A more thoughtful way to find roommates.</p>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="relative mx-auto w-full max-w-[650px] lg:ml-auto">
+          <div className="absolute -left-8 top-10 h-40 w-40 rounded-full bg-[#ffd6bf]/65 blur-3xl" />
+          <div className="absolute -right-6 bottom-8 h-44 w-44 rounded-full bg-[#e4d3ff]/65 blur-3xl" />
+          <div className="instagram-gradient relative rotate-[2deg] rounded-[34px] p-[3px] shadow-[0_32px_90px_rgba(130,63,87,0.2)] transition-transform duration-700 hover:rotate-0">
+            <div className="relative h-[390px] overflow-hidden rounded-[31px] bg-[#eadbd1] sm:h-[510px]">
+              <Image src={heroImage} alt="A group of friends enjoying time together" fill priority sizes="(max-width: 1024px) 90vw, 600px" unoptimized className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#261b1b]/80 via-transparent to-[#251a1a]/10" />
+              <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/20 px-3 py-2 text-xs font-semibold text-white backdrop-blur-md sm:left-7 sm:top-7">
+                <BadgeCheck className="h-4 w-4 text-[#93e0cf]" />
+                Made for student life
+              </div>
+              <div className="absolute bottom-6 left-6 right-6 text-white sm:bottom-9 sm:left-9 sm:right-9">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/75">Your next chapter</p>
+                <p className="mt-2 max-w-[380px] text-3xl font-extrabold leading-[1.05] tracking-[-0.05em] sm:text-5xl">Starts with a shared hello.</p>
+                <div className="mt-5 flex items-center gap-2 text-sm font-medium text-white/85">
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-white/20"><House className="h-3.5 w-3.5" /></span>
+                  Find your people, then build a place.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="absolute -bottom-5 left-0 z-10 flex items-center gap-3 rounded-2xl border border-white/80 bg-white/95 p-3.5 shadow-[0_16px_45px_rgba(40,31,27,0.12)] sm:-left-8 sm:bottom-10 sm:p-4">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#fff0f2] text-[#e34e70]"><HeartHandshake className="h-5 w-5" /></div>
+            <div>
+              <p className="text-sm font-bold text-[#342f2c]">Shared rhythms matter.</p>
+              <p className="mt-0.5 text-xs text-[#8b8480]">Start with what makes a home feel right.</p>
+            </div>
+          </div>
+          <div className="absolute -right-2 top-20 z-10 hidden rounded-2xl border border-white/80 bg-white/95 p-3.5 shadow-[0_16px_45px_rgba(40,31,27,0.12)] sm:block">
+            <div className="flex items-center gap-2.5">
+              <div className="grid h-9 w-9 place-items-center rounded-full bg-[#f2eaff] text-[#8b55c8]"><Sparkles className="h-4 w-4" /></div>
+              <div><p className="text-xs font-bold text-[#342f2c]">Your kind of people</p><p className="text-[10px] text-[#8b8480]">One good match at a time</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-[#eee9e5] bg-white/60 py-7">
+        <div className="mx-auto grid max-w-[1200px] gap-4 px-4 sm:grid-cols-3 sm:px-6">
+          {[
+            { value: "01", title: "Show up as you are", note: "Create a profile that feels like you." },
+            { value: "02", title: "Find your rhythm", note: "Meet people with compatible habits." },
+            { value: "03", title: "Make it a group thing", note: "Start building your next home together." },
+          ].map((step) => (
+            <div key={step.value} className="flex items-start gap-3 rounded-2xl px-2 py-3 sm:px-4">
+              <span className="text-xs font-extrabold tracking-[0.14em] text-[#df496c]">{step.value}</span>
+              <div><p className="text-sm font-bold text-[#332f2c]">{step.title}</p><p className="mt-1 text-xs leading-5 text-[#89837f]">{step.note}</p></div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-[660px] text-center">
+          <p className="eyebrow">A better way to roommate</p>
+          <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.06em] text-[#2b2826] sm:text-5xl">A home is more than a floor plan.</h2>
+          <p className="mt-4 text-sm leading-6 text-[#7d7773] sm:text-base">Start with the little things that make living together feel easy.</p>
+        </div>
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {features.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <article key={feature.title} className="surface-card p-6 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(40,31,27,0.09)] sm:p-7">
+                <div className={`grid h-12 w-12 place-items-center rounded-2xl ${feature.color}`}><Icon className="h-5 w-5" /></div>
+                <h3 className="mt-5 text-lg font-bold tracking-[-0.03em] text-[#342f2c]">{feature.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#817b77]">{feature.body}</p>
+              </article>
+            );
+          })}
+        </div>
+        <div className="mt-10 flex justify-center">
+          <Link href="/profiles" className="group inline-flex items-center gap-2 text-sm font-bold text-[#d94368] hover:text-[#b42e50]">
+            See who you could meet <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

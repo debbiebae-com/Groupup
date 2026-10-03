@@ -1,24 +1,24 @@
 import { io, type Socket } from "socket.io-client";
 
 const SIGNALING_URL = process.env.NEXT_PUBLIC_SIGNALING_URL;
-const USE_MOCK = process.env.USE_MOCK_API === "true";
+const MOCK_SETTING = process.env.NEXT_PUBLIC_USE_MOCK_API;
+const USE_MOCK = MOCK_SETTING === "true" || (process.env.NODE_ENV === "development" && MOCK_SETTING !== "false");
 
 let socket: Socket | null = null;
 
-export function getSocket(): Socket | null {
-  if (USE_MOCK || !SIGNALING_URL) {
-    return null; // mock mode: use REST polling instead
-  }
+export function getSocket(token?: string | null): Socket | null {
+  if (USE_MOCK || !SIGNALING_URL) return null;
   if (!socket) {
-    socket = io(SIGNALING_URL, { autoConnect: false });
+    socket = io(SIGNALING_URL, {
+      autoConnect: false,
+      auth: token ? { token } : undefined,
+    });
   }
   return socket;
 }
 
-export function connectSocket(): Socket | null {
-  const s = getSocket();
-  if (s && !s.connected) {
-    s.connect();
-  }
-  return s;
+export function connectSocket(token?: string | null): Socket | null {
+  const current = getSocket(token);
+  if (current && !current.connected) current.connect();
+  return current;
 }

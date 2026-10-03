@@ -1,10 +1,10 @@
-﻿import type { User } from "@/types/api";
+import type { User } from "@/types/api";
 
 export const mockCurrentUser: User = {
   id: "u_me",
   email: "jordan@nationaluniversity.edu",
-  displayName: "Jordan",
+  displayName: "Jordan Lee",
   verificationStatus: "VERIFIED",
-  badges: ["verified_student", "id_checked"],
+  badges: ["verified_student"],
   tier: 3,
 };

@@ -1,12 +1,14 @@
 "use client";
 
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import { BadgeCheck, MapPin, Moon, Sparkles } from "lucide-react";
 import type { Profile } from "@/types/api";
+import { CoverPhoto } from "@/components/shared/CoverPhoto";
 
 const intentLabels: Record<string, string> = {
-  SOLO_NEW: "Forming a group",
-  PAIR_ADD: "Adding members",
-  SOLO_JOIN: "Joining a group",
+  SOLO_NEW: "Building a group",
+  PAIR_ADD: "Adding to a group",
+  SOLO_JOIN: "Finding a group",
 };
 
 export function SwipeCard({
@@ -17,9 +19,9 @@ export function SwipeCard({
   onSwipe: (direction: "LIKE" | "PASS") => void;
 }) {
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-300, 300], [-12, 12]);
-  const likeOpacity = useTransform(x, [40, 180], [0, 1]);
-  const passOpacity = useTransform(x, [-180, -40], [1, 0]);
+  const rotate = useTransform(x, [-300, 300], [-9, 9]);
+  const likeOpacity = useTransform(x, [25, 150], [0, 1]);
+  const passOpacity = useTransform(x, [-150, -25], [1, 0]);
 
   function handleDragEnd() {
     const offset = x.get();
@@ -28,68 +30,36 @@ export function SwipeCard({
   }
 
   return (
-    <motion.div
+    <motion.article
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.9}
+      dragElastic={0.82}
       style={{ x, rotate }}
       onDragEnd={handleDragEnd}
-      className="relative h-[480px] w-full max-w-sm cursor-grab rounded-2xl border bg-card p-6 shadow-sm active:cursor-grabbing"
+      className="group relative h-[520px] w-full max-w-[410px] cursor-grab overflow-hidden rounded-[30px] bg-[#ded3ce] shadow-[0_24px_65px_rgba(58,42,38,0.18)] active:cursor-grabbing sm:h-[560px]"
     >
-      <motion.div
-        style={{ opacity: likeOpacity }}
-        className="absolute left-4 top-4 rounded-md border-2 border-swipe-accept px-3 py-1 text-lg font-bold text-swipe-accept"
-      >
-        LIKE
-      </motion.div>
-      <motion.div
-        style={{ opacity: passOpacity }}
-        className="absolute right-4 top-4 rounded-md border-2 border-swipe-reject px-3 py-1 text-lg font-bold text-swipe-reject"
-      >
-        PASS
-      </motion.div>
+      <CoverPhoto src={profile.avatarUrl} name={profile.displayName} alt={`Photo of ${profile.displayName}`} className="absolute inset-0 h-full w-full" priority />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[#170f11]/90" />
 
-      <div className="flex flex-col items-center pt-10 text-center">
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted text-3xl font-medium">
-          {profile.displayName.slice(0, 1)}
-        </div>
-        <h2 className="mt-4 text-xl font-semibold">{profile.displayName}</h2>
-        <p className="text-sm text-muted-foreground">
-          {profile.university} · {profile.campus}
-        </p>
-        {profile.compatibilityScore !== undefined && (
-          <span className="mt-2 rounded-full bg-verified-teal/10 px-3 py-1 text-sm font-medium text-verified-teal">
-            {profile.compatibilityScore}% match
-          </span>
-        )}
+      <motion.span style={{ opacity: likeOpacity }} className="absolute left-6 top-6 z-10 rotate-[-9deg] rounded-xl border-[3px] border-[#65e0a4] bg-black/10 px-4 py-2 text-xl font-black tracking-[0.12em] text-[#8bf1bb] backdrop-blur-sm">LIKE</motion.span>
+      <motion.span style={{ opacity: passOpacity }} className="absolute right-6 top-6 z-10 rotate-[9deg] rounded-xl border-[3px] border-[#ff8390] bg-black/10 px-4 py-2 text-xl font-black tracking-[0.12em] text-[#ff9ca5] backdrop-blur-sm">PASS</motion.span>
+
+      <div className="absolute left-5 right-5 top-5 flex items-center justify-between gap-3">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/25 px-3 py-2 text-[10px] font-bold text-white backdrop-blur-md"><BadgeCheck className="h-3.5 w-3.5 text-[#83e1c6]" /> Campus verified</span>
+        {profile.compatibilityScore !== undefined && <span className="inline-flex items-center gap-1 rounded-full bg-white/95 px-3 py-2 text-[10px] font-extrabold text-[#d94368] shadow-sm"><Sparkles className="h-3.5 w-3.5" /> {profile.compatibilityScore}% vibe</span>}
       </div>
 
-      <div className="mt-6 space-y-3">
-        <div>
-          <p className="text-xs text-muted-foreground">Cleanliness</p>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-match-amber" style={{ width: `${profile.cleanliness * 10}%` }} />
-          </div>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Social energy</p>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-match-amber" style={{ width: `${profile.socialEnergy * 10}%` }} />
-          </div>
+      <div className="absolute bottom-0 left-0 right-0 p-6 text-white sm:p-7">
+        <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-white/75">{intentLabels[profile.groupIntent] ?? profile.groupIntent}</p>
+        <h2 className="mt-1 text-xl font-extrabold tracking-[-0.04em] sm:text-[32px]">{profile.displayName}</h2>
+        <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-white/80"><MapPin className="h-3.5 w-3.5" /> {profile.university} · {profile.campus}</p>
+        <p className="mt-4 line-clamp-2 text-sm leading-6 text-white/90">{profile.bio}</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[10px] font-semibold text-white backdrop-blur"><Moon className="h-3 w-3" /> {profile.sleepSchedule.toLowerCase().replace("_", " ")}</span>
+          <span className="rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[10px] font-semibold text-white backdrop-blur">${profile.budget.min}–${profile.budget.max} / month</span>
+          {profile.nonNegotiables.slice(0, 1).map((tag) => <span key={tag} className="rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[10px] font-semibold text-white backdrop-blur">{tag.replaceAll("_", " ")}</span>)}
         </div>
       </div>
-
-      <div className="mt-4 flex flex-wrap gap-1.5 justify-center">
-        {profile.nonNegotiables.map((tag) => (
-          <span key={tag} className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-            {tag.replace("_", " ")}
-          </span>
-        ))}
-      </div>
-
-      <p className="mt-4 text-center text-xs text-muted-foreground">
-        {intentLabels[profile.groupIntent]} · {profile.sleepSchedule.toLowerCase().replace("_", " ")}
-      </p>
-    </motion.div>
+    </motion.article>
   );
 }

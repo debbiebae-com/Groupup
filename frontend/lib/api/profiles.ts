@@ -1,4 +1,4 @@
-﻿import { apiFetch } from "./client";
+import { apiFetch } from "./client";
 import type { Profile, ProfileUpdatePayload } from "@/types/api";
 
 export interface ProfileFilters {
@@ -17,6 +17,10 @@ export async function getProfiles(filters: ProfileFilters = {}): Promise<{ profi
   });
   const qs = params.toString();
   return apiFetch<{ profiles: Profile[]; total: number }>(`/profiles${qs ? `?${qs}` : ""}`);
+}
+
+export async function getMyProfile(): Promise<{ profile: Profile }> {
+  return apiFetch<{ profile: Profile }>("/profiles/me");
 }
 
 export async function getProfileById(id: string): Promise<{ profile: Profile }> {
