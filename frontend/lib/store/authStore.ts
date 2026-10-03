@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import type { User } from "@/types/api";
-import { clearLocalDemoMode, isMockMode } from "@/lib/mocks/mode";
+import { clearLocalDemoMode, enableLocalDemoMode, isMockMode } from "@/lib/mocks/mode";
 
 type ApiOptions = Omit<RequestInit, "body"> & { body?: unknown };
 type ApiError = Error & { status?: number };
@@ -53,6 +53,7 @@ interface AuthState {
   hydrate: () => Promise<void>;
   register: (email: string, password: string, displayName: string) => Promise<{ ok: boolean; error?: string }>;
   login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  loginDemo: () => Promise<{ ok: boolean; error?: string }>;
   requestVerification: (email: string) => Promise<{ ok: boolean; devToken?: string; error?: string }>;
   confirmVerification: (email: string, token: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
@@ -118,6 +119,25 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       return { ok: true };
     } catch (error) {
       return { ok: false, error: error instanceof Error ? error.message : "Login failed" };
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  loginDemo: async () => {
+    set({ loading: true });
+    try {
+      enableLocalDemoMode();
+      const { demoApiRequest } = await import("@/lib/mocks/localApi");
+      const data = await demoApiRequest<{ token: string; user: User }>("/auth/login", {
+        method: "POST",
+        body: { email: "jordan@nationaluniversity.edu", password: "groupup-demo" },
+      });
+      persistToken(data.token);
+      set({ token: data.token, user: data.user, isVerified: data.user.verificationStatus === "VERIFIED", tier: data.user.tier });
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: error instanceof Error ? error.message : "Demo sign-in failed" };
     } finally {
       set({ loading: false });
     }

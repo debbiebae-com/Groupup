@@ -19,16 +19,18 @@ describe("local demo API", () => {
     expect(isMockMode()).toBe(true);
   });
 
-  it("uses local login after the demo action even when backend mode is configured", async () => {
+  it("signs in Jordan locally and keeps discovery local even when backend mode is configured", async () => {
     vi.stubEnv("NEXT_PUBLIC_USE_MOCK_API", "false");
+    clearLocalDemoMode();
     const fetch = vi.fn();
     vi.stubGlobal("fetch", fetch);
-    enableLocalDemoMode();
 
-    const result = await useAuthStore.getState().login("jordan@nationaluniversity.edu", "groupup-demo");
+    const result = await useAuthStore.getState().loginDemo();
+    const profiles = await getProfiles();
 
     expect(result.ok).toBe(true);
     expect(useAuthStore.getState().user?.displayName).toBe("Jordan Lee");
+    expect(profiles.profiles).toHaveLength(12);
     expect(fetch).not.toHaveBeenCalled();
     useAuthStore.getState().logout();
   });
