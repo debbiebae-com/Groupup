@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { MSWProvider } from "@/components/MSWProvider";
+import { DemoProvider } from "@/components/DemoProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -17,11 +17,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-background font-sans antialiased">
-        <MSWProvider>
+        <DemoProvider>
           <Navbar />
           <main className="min-h-[calc(100vh-150px)] pb-20 lg:pb-0">{children}</main>
           <Footer />
-        </MSWProvider>
+        </DemoProvider>
       </body>
     </html>
   );

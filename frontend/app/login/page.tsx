@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, BadgeCheck, Eye, EyeOff, Heart, LockKeyhole, Sparkles, UsersRound } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
-const loginPhoto = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=88";
+const loginPhoto = "/images/demo/campus-group.jpg";
 
 export default function LoginPage() {
   const router = useRouter();

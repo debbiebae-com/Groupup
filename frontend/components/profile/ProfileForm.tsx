@@ -165,7 +165,7 @@ export function ProfileForm() {
           <div className="surface-card overflow-hidden">
             <div className="instagram-gradient h-20" />
             <div className="px-5 pb-5">
-              <Photo name={displayName || user?.displayName || "You"} size="xl" className="-mt-11 border-[4px] border-white shadow-md" />
+              <Photo src="/images/demo/people/portrait-13.jpg" name={displayName || user?.displayName || "You"} size="xl" className="-mt-11 border-[4px] border-white shadow-md" />
               <p className="mt-3 text-lg font-extrabold tracking-[-0.04em] text-[#393330]">{displayName || user?.displayName || "Your name here"}</p>
               <p className="mt-1 flex items-center gap-1.5 text-[10px] text-[#8e8782]"><MapPin className="h-3 w-3" /> {watch("university") || "Your university"} · {watch("campus") || "Your campus"}</p>
               <p className="mt-4 line-clamp-3 text-xs leading-5 text-[#77716d]">{watch("bio") || "A little about you will make the first hello easier."}</p>

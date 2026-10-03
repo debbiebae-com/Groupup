@@ -6,9 +6,10 @@ import { Photo } from "@/components/shared/Photo";
 import { mockProfiles } from "@/lib/mocks/mockData/profiles";
 
 const covers = [
-  "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=85",
-  "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=900&q=85",
+  "/images/demo/spaces/living-room-01.jpg",
+  "/images/demo/spaces/living-room-02.jpg",
+  "/images/demo/spaces/living-room-03.jpg",
+  "/images/demo/spaces/living-room-04.jpg",
 ];
 
 export function GroupCard({ group, onOpen }: { group: Group; onOpen: () => void }) {
@@ -18,7 +19,6 @@ export function GroupCard({ group, onOpen }: { group: Group; onOpen: () => void 
   return (
     <article className="surface-card group overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_50px_rgba(40,31,27,0.11)]">
       <div className="relative h-[170px] overflow-hidden bg-[#eee3dc]">
-        {/* The locally seeded circles use gentle editorial photos as their cover art. */}
         <div className="absolute inset-0 bg-cover bg-center transition duration-700 group-hover:scale-[1.04]" style={{ backgroundImage: `linear-gradient(0deg, rgba(28,21,22,.56), transparent 70%), url("${cover}")` }} />
         <div className="absolute left-4 top-4 rounded-full border border-white/40 bg-white/90 px-3 py-1.5 text-[10px] font-bold text-[#5b514c] shadow-sm">{group.intent.replaceAll("_", " ").toLowerCase()}</div>
         <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3 text-white">
@@ -33,7 +33,7 @@ export function GroupCard({ group, onOpen }: { group: Group; onOpen: () => void 
             {group.members.slice(0, 4).map((member) => {
               const profile = mockProfiles.find((candidate) => candidate.userId === member.userId);
               const displayName = member.userId === "u_me" ? "Jordan Lee" : profile?.displayName ?? "Group member";
-              return <Photo key={member.userId} src={profile?.avatarUrl} name={displayName} size="sm" className="border-[2px] border-white shadow-sm" />;
+              return <Photo key={member.userId} src={member.userId === "u_me" ? "/images/demo/people/portrait-13.jpg" : profile?.avatarUrl} name={displayName} size="sm" className="border-[2px] border-white shadow-sm" />;
             })}
             {memberCount > 4 && <span className="grid h-10 w-10 place-items-center rounded-full border-2 border-white bg-[#f1eaff] text-[10px] font-bold text-[#8b58c0]">+{memberCount - 4}</span>}
           </div>

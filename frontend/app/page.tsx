@@ -10,12 +10,12 @@ import {
   UsersRound,
 } from "lucide-react";
 
-const heroImage = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=88";
+const heroImage = "/images/demo/campus-group.jpg";
 const faces = [
-  { name: "Maya", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80" },
-  { name: "Theo", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=160&q=80" },
-  { name: "Nia", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=160&q=80" },
-  { name: "Leo", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=160&q=80" },
+  { name: "Maya", image: "/images/demo/people/portrait-03.jpg" },
+  { name: "Theo", image: "/images/demo/people/portrait-07.jpg" },
+  { name: "Nia", image: "/images/demo/people/portrait-04.jpg" },
+  { name: "Leo", image: "/images/demo/people/portrait-10.jpg" },
 ];
 
 const features = [

@@ -8,7 +8,7 @@ const currentProfile: Profile = {
   userId: mockCurrentUser.id,
   displayName: mockCurrentUser.displayName,
   bio: "Design student, market wanderer and believer that home should feel easy to come back to.",
-  avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=700&q=85",
+  avatarUrl: "/images/demo/people/portrait-13.jpg",
   cleanliness: 8,
   socialEnergy: 7,
   sleepSchedule: "FLEXIBLE",
