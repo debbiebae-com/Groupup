@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, BadgeCheck, Eye, EyeOff, Heart, LockKeyhole, Sparkles, UsersRound } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
+import { enableLocalDemoMode } from "@/lib/mocks/mode";
 
 const loginPhoto = "/images/demo/campus-group.jpg";
 
@@ -40,6 +41,7 @@ export default function LoginPage() {
 
   async function signInWithDemo() {
     setError(null);
+    enableLocalDemoMode();
     const result = await login("jordan@nationaluniversity.edu", "groupup-demo");
     if (!result.ok) {
       setError(result.error ?? "The demo account couldn't sign in.");

@@ -20,7 +20,7 @@ npm ci
 npm run dev
 ```
 
-Visit http://localhost:3000. The app opens in an authenticated demo session. For the local verification flow, use the code shown in the UI (`GROUPUP26`). Demo mutations are kept in memory and reset when the page reloads.
+Visit http://localhost:3000. The app opens in an authenticated demo session. **Explore the demo as Jordan** also explicitly switches to the local adapter, even when backend mode is configured; that override lasts until you sign out. For the local verification flow, use the code shown in the UI (`GROUPUP26`). Demo mutations are kept in memory and reset when the page reloads.
 
 ## Deploy to Vercel
 

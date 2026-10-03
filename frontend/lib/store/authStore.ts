@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import type { User } from "@/types/api";
-import { isMockMode } from "@/lib/mocks/mode";
+import { clearLocalDemoMode, isMockMode } from "@/lib/mocks/mode";
 
 type ApiOptions = Omit<RequestInit, "body"> & { body?: unknown };
 type ApiError = Error & { status?: number };
@@ -149,6 +149,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   },
 
   logout: () => {
+    clearLocalDemoMode();
     persistToken(null);
     set({ user: null, isVerified: false, token: null, tier: 1, loading: false });
   },
