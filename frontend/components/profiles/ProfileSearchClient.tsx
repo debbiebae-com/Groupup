@@ -8,7 +8,7 @@ import { FilterPanel, type Filters } from "./FilterPanel";
 
 const defaultFilters: Filters = { q: "", group_intent: "", budget_max: 0, campus: "" };
 
-export function ProfileSearchClient({ initialProfiles }: { initialProfiles: Profile[] }) {
+export function ProfileSearchClient({ initialProfiles = [] }: { initialProfiles?: Profile[] }) {
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [profiles, setProfiles] = useState<Profile[]>(initialProfiles);
   const [loading, setLoading] = useState(false);

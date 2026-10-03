@@ -1,0 +1,8 @@
+[33m161aeea[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Prod Readiness: GAP-003 gate devToken fallback to non-production
+[33mc46cff3[m Prod Readiness: GAP-006 enforce tier checks server-side on swipe, match, group and message routes
+[33me4e91f0[m Prod Readiness: GAP-005 require auth on profile list and detail endpoints
+[33ma49d78c[m Prod Readiness: GAP-004 enforce group membership authz in socket handlers
+[33mbf194fe[m fix(frontend): show nav links on mobile
+[33mb7a14e9[m feat: add WebRTC signaling relay and wire frontend to live socket.io
+[33mf73778f[m feat(backend): add socket.io server with real-time group chat broadcast
+[33m4b07405[m feat(backend): graceful email fallback when Resend rejects the send

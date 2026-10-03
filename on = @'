@@ -1,0 +1,10 @@
+warning: in the working copy of 'frontend/app/profiles/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/app/swipe/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/components/profiles/ProfileSearchClient.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/components/swipe/SwipeContainer.tsx', LF will be replaced by CRLF the next time Git touches it
+ frontend/app/profiles/page.tsx                       | 3 [32m+[m[31m--[m
+ frontend/app/swipe/page.tsx                          | 3 [32m+[m[31m--[m
+ frontend/components/profiles/ProfileSearchClient.tsx | 2 [32m+[m[31m-[m
+ frontend/components/swipe/SwipeContainer.tsx         | 2 [32m+[m[31m-[m
+ frontend/vercel.json                                 | 8 [32m+[m[31m-------[m
+ 5 files changed, 5 insertions(+), 13 deletions(-)

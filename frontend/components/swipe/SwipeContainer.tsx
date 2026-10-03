@@ -7,7 +7,7 @@ import { SwipeCard } from "./SwipeCard";
 import { SwipeButtons } from "./SwipeButtons";
 import { MatchCelebration } from "./MatchCelebration";
 
-export function SwipeContainer({ initialProfiles }: { initialProfiles: Profile[] }) {
+export function SwipeContainer({ initialProfiles = [] }: { initialProfiles?: Profile[] }) {
   const [queue, setQueue] = useState<Profile[]>(initialProfiles);
   const [matched, setMatched] = useState<Profile | null>(null);
 
