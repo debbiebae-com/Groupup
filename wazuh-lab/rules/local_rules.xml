@@ -1,0 +1,212 @@
+<!--
+  ============================================================================
+  Wazuh SIEM Lab : custom detection rules
+  ============================================================================
+  Install to:   /var/ossec/etc/rules/local_rules.xml
+  Ownership:    wazuh:wazuh   (chmod 660)
+  Validate:     sudo /var/ossec/bin/wazuh-analysisd -t
+  Apply:        sudo systemctl restart wazuh-manager
+  Test:         sudo /var/ossec/bin/wazuh-logtest
+
+  Conventions
+  ===========
+  * Custom IDs start at 100000 and must not collide with the default ruleset.
+  * NEVER edit the stock rules in /var/ossec/ruleset/rules/ ; they are replaced
+    on every upgrade. This file is local and survives upgrades.
+  * level  0-6  informational  |  7-11 elevated  |  12-15 critical
+
+  Built-in rules these chain from:
+      5710  sshd: attempt to login using a non-existent user   (L5)
+      5712  sshd: brute force, non-existent user               (L10)
+      5760  sshd: authentication failed                        (L5)
+      5763  sshd: brute force trying to get access             (L10)
+      5715  sshd: authentication success                       (L3)
+      5402  sudo: successful sudo to ROOT executed             (L3)
+      550   syscheck: file modified                            (L7)
+      553   syscheck: file deleted                             (L7)
+      554   syscheck: file added                               (L5)
+  ============================================================================
+-->
+
+<group name="local,">
+
+  <!-- ==========================================================================
+       1. SSH BRUTE FORCE  (correlation over failed logins)
+       ==========================================================================
+       Fires when rule 5710 (invalid user) has matched 6 times within 120 s
+       from the same source address. The 60 s ignore stops an alert storm
+       while an attack is still running.
+
+       Built-in 5712 already does this at 8 events / 120 s. This rule adds a
+       faster and louder threshold so the lab demonstrates explicit
+       correlation on top of the stock detection.
+       ========================================================================== -->
+  <group name="syslog,sshd,authentication_failures,brute_force,">
+    <rule id="100100" level="10" frequency="6" timeframe="120" ignore="60">
+      <if_matched_sid>5710</if_matched_sid>
+      <same_source_ip />
+      <description>Lab: SSH brute force from $(srcip) - 6 or more invalid-user attempts in 120s</description>
+      <mitre>
+        <id>T1110</id>
+        <id>T1110.001</id>
+      </mitre>
+      <group>brute_force,authentication_failures,pci_dss_11.4,</group>
+    </rule>
+  </group>
+
+  <!-- ==========================================================================
+       2. SUSPICIOUS SSH ACTIVITY  (success after a burst of failures)
+       ==========================================================================
+       The high-value signal: an authenticated session that follows a burst
+       of failures from the same address. Either a successful guess or a
+       legitimate user who mistyped repeatedly. An analyst must triage it.
+       ========================================================================== -->
+  <group name="syslog,sshd,">
+    <rule id="100101" level="12" timeframe="600">
+      <if_sid>5715</if_sid>
+      <if_matched_sid>100100</if_matched_sid>
+      <same_source_ip />
+      <description>Lab: CRITICAL - successful SSH login from $(srcip) after a brute-force burst</description>
+      <mitre>
+        <id>T1110</id>
+        <id>T1078</id>
+      </mitre>
+      <group>authentication_success,possible_compromise,</group>
+    </rule>
+
+    <!-- Direct root authentication. Should be disabled on any modern host. -->
+    <rule id="100102" level="9">
+      <if_sid>5715</if_sid>
+      <match>for root from</match>
+      <description>Lab: direct SSH login as root from $(srcip)</description>
+      <mitre>
+        <id>T1078</id>
+        <id>T1021.004</id>
+      </mitre>
+      <group>authentication_success,root_login,</group>
+    </rule>
+  </group>
+
+  <!-- ==========================================================================
+       3. PRIVILEGE ESCALATION
+       ==========================================================================
+       Stock 5402 logs every successful sudo-to-root at level 3, which is far
+       too quiet. Escalating to an interactive shell is much more interesting
+       than running a single administrative command, so it gets its own rule.
+
+       Matching on the raw COMMAND= text is deliberate: it does not depend on
+       optional decoder fields being present in a given Wazuh release.
+       ========================================================================== -->
+  <group name="syslog,sudo,">
+    <rule id="100110" level="10">
+      <if_group>sudo</if_group>
+      <regex type="pcre2">COMMAND=(?:/bin/|/usr/bin/)?(?:ba|z|k|da)?sh\b|COMMAND=(?:/usr/bin/)?(?:vim?|nano|python[0-9.]*|perl)\b</regex>
+      <description>Lab: privilege escalation - interactive root shell obtained via sudo</description>
+      <mitre>
+        <id>T1548.003</id>
+        <id>T1059.004</id>
+      </mitre>
+      <group>privilege_escalation,sudo_abuse,</group>
+    </rule>
+
+    <!--
+      Repeated failed sudo attempts: a known user spraying passwords to
+      escalate. A self-frequency rule: it fires on the third match of itself
+      within 120 s.
+    -->
+    <rule id="100111" level="9" frequency="3" timeframe="120">
+      <decoded_as>sudo</decoded_as>
+      <regex type="pcre2">(?i)incorrect password|not in sudoers|is not allowed to run|authentication failure</regex>
+      <description>Lab: repeated failed sudo attempts - possible privilege escalation</description>
+      <mitre>
+        <id>T1548.003</id>
+      </mitre>
+      <group>privilege_escalation,sudo_abuse,authentication_failed,</group>
+    </rule>
+
+    <!-- A user or group definition changed. Classic persistence / escalation. -->
+    <rule id="100112" level="10">
+      <if_sid>550</if_sid>
+      <field name="file" type="pcre2">^/etc/(sudoers|group)$</field>
+      <description>Lab: privilege configuration modified - $(file)</description>
+      <mitre>
+        <id>T1548.003</id>
+        <id>T1098</id>
+      </mitre>
+      <group>privilege_escalation,syscheck,</group>
+    </rule>
+  </group>
+
+  <!-- ==========================================================================
+       4. FILE INTEGRITY MONITORING  (elevated rules for sensitive paths)
+       ==========================================================================
+       Stock FIM rules are generic (550 / 553 / 554 at L5 to L7). These
+       re-score changes to high-value paths so they surface in the queue.
+
+       <field name="file"> matches the syscheck path directly, rather than
+       grepping the whole log line, so it is not fooled by a path appearing
+       inside another event's text.
+       ========================================================================== -->
+  <group name="syscheck,">
+    <rule id="100120" level="10">
+      <if_sid>550</if_sid>
+      <field name="file" type="pcre2">^/etc/(passwd|shadow|shadow-|gshadow|sudoers|ssh/sshd_config)$</field>
+      <description>Lab: sensitive system file modified - $(file)</description>
+      <mitre>
+        <id>T1565</id>
+        <id>T1098</id>
+      </mitre>
+      <group>syscheck,critical_file_change,</group>
+    </rule>
+
+    <rule id="100121" level="10">
+      <if_sid>554</if_sid>
+      <field name="file" type="pcre2">^(/etc/cron|/etc/systemd|/etc/init\.d|/root/|/etc/profile)</field>
+      <description>Lab: persistence artefact created - $(file)</description>
+      <mitre>
+        <id>T1053</id>
+        <id>T1543</id>
+      </mitre>
+      <group>syscheck,persistence,</group>
+    </rule>
+
+    <rule id="100122" level="9">
+      <if_sid>553</if_sid>
+      <field name="file" type="pcre2">^(/etc/|/root/)</field>
+      <description>Lab: system file deleted - possible defence evasion - $(file)</description>
+      <mitre>
+        <id>T1070</id>
+        <id>T1485</id>
+      </mitre>
+      <group>syscheck,defence_evasion,</group>
+    </rule>
+  </group>
+
+  <!-- ==========================================================================
+       5. OTHER NOTABLE EVENTS
+       ========================================================================== -->
+  <group name="syscheck,">
+    <!-- New local account: /etc/passwd changed. Verify no rogue account. -->
+    <rule id="100130" level="8">
+      <if_sid>550</if_sid>
+      <field name="file" type="pcre2">^/etc/passwd$</field>
+      <description>Lab: local account database modified - verify no rogue account was created</description>
+      <mitre>
+        <id>T1136</id>
+      </mitre>
+      <group>account_manipulation,syscheck,</group>
+    </rule>
+
+    <!-- SSH daemon hardened or weakened: root login / password auth flipped. -->
+    <rule id="100131" level="7">
+      <if_sid>550</if_sid>
+      <field name="file" type="pcre2">^/etc/ssh/sshd_config$</field>
+      <description>Lab: SSH daemon configuration changed - review the diff</description>
+      <mitre>
+        <id>T1562.001</id>
+      </mitre>
+      <group>configuration_change,syscheck,</group>
+    </rule>
+  </group>
+
+</group>
