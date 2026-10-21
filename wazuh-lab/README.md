@@ -202,6 +202,9 @@ sudo ss -ltnp | grep -E ':(443|9200|1514|1515|55000)\b'
 
 ### 5.7 Open the dashboard
 
+> Dedicated walkthrough, including NAT-only port forwarding and a troubleshooting table:
+> [`docs/access-dashboard.md`](docs/access-dashboard.md)
+
 From your **host** browser:
 
 ```
@@ -610,6 +613,7 @@ VBoxManage unregistervm "test-endpoint" --delete
 | `scripts/simulate-detections.sh` | Generates every required security event on the endpoint |
 | `scripts/verify-alerts.sh` | Parses alerts.json; per-rule counts, PASS/FAIL checklist, top IPs |
 | `scripts/install-agent.sh` | One-shot agent install/enroll helper |
+| `docs/access-dashboard.md` | How to reach the dashboard: URL, IP discovery, NAT port forwarding, troubleshooting |
 | `docs/dashboard-filters.md` | Copy-paste dashboard queries |
 | `docs/lab-report-template.md` | Report skeleton matching the assessment criteria |
 
