@@ -1,0 +1,86 @@
+<!--
+  ============================================================================
+  File Integrity Monitoring configuration
+  ============================================================================
+  Paste inside the <ossec_config> block of the AGENT configuration file:
+
+      Linux:   /var/ossec/etc/ossec.conf
+      Windows: C:\Program Files (x86)\ossec-agent\ossec.conf
+
+  Then restart the agent:
+      Linux:   sudo systemctl restart wazuh-agent
+      Windows: Restart-Service -Name wazuh
+
+  Notes
+  =====
+  * realtime="yes" works on DIRECTORIES only, never on individual files.
+  * The directory must exist before the agent starts, otherwise the module
+    ignores it until the next agent restart.
+  * The first scan only builds a baseline. Alerts begin after that.
+  * check_all="yes" enables every check including content hashing (md5/sha1/sha256).
+  * report_changes="yes" stores the actual text diff, shown in the dashboard.
+  * who-data adds the user and process responsible (requires auditd on Linux).
+  ============================================================================
+-->
+
+<syscheck>
+  <!-- Scheduled scan interval in seconds. 300 s keeps the lab responsive;
+       the default is 43200 s (12 hours). -->
+  <frequency>300</frequency>
+
+  <!-- Run a full scan when the agent starts -->
+  <scan_on_start>yes</scan_on_start>
+
+  <!-- Create an alert when a new file appears in a monitored directory -->
+  <alert_new_files>yes</alert_new_files>
+
+  <!--
+    Lab directory: safe place to create/modify/delete files for demos.
+    Real-time monitoring gives sub-second alerts.
+  -->
+  <directories check_all="yes" report_changes="yes" realtime="yes">/opt/lab-watch</directories>
+
+  <!--
+    System configuration. Realtime here is what catches /etc/passwd,
+    /etc/sudoers, /etc/ssh/sshd_config and cron changes immediately.
+    who-data attributes the change to a user and process (needs auditd).
+  -->
+  <directories check_all="yes" report_changes="yes" realtime="yes" whodata="yes">/etc</directories>
+
+  <!-- Root's home: SSH keys, shell history, scripts -->
+  <directories check_all="yes" report_changes="yes" realtime="yes">/root</directories>
+
+  <!-- Binaries: catches trojanised system utilities (slower, scheduled scan) -->
+  <directories check_all="yes" report_changes="yes">/usr/bin</directories>
+  <directories check_all="yes" report_changes="yes">/usr/sbin</directories>
+
+  <!-- ==================================================================
+       Noise reduction. These files change constantly on a live system
+       and would otherwise flood the alert queue.
+       ================================================================== -->
+  <ignore>/etc/mtab</ignore>
+  <ignore>/etc/random-seed</ignore>
+  <ignore>/etc/adjtime</ignore>
+  <ignore>/etc/resolv.conf</ignore>
+  <ignore>/etc/hosts.deny</ignore>
+  <ignore>/etc/network/interfaces</ignore>
+  <ignore>/etc/udev/rules.d/70-persistent-net.rules</ignore>
+  <ignore>/etc/apt/apt.conf.d/01autoremove-kernels</ignore>
+  <ignore type="sregex">.log$|.tmp$|.swp$|~$|\.bak$</ignore>
+  <ignore type="sregex">^/etc/apt/.*\.list$</ignore>
+</syscheck>
+
+<!--
+  ============================================================================
+  OPTIONAL — Windows endpoint equivalent
+  ============================================================================
+  <syscheck>
+    <frequency>300</frequency>
+    <directories check_all="yes" report_changes="yes" realtime="yes">C:\Users</directories>
+    <directories check_all="yes" report_changes="yes" realtime="yes">C:\Windows\System32\drivers\etc</directories>
+    <directories check_all="yes" report_changes="yes" realtime="yes">C:\Program Files</directories>
+    <windows_registry check_all="yes">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</windows_registry>
+    <windows_registry check_all="yes">HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services</windows_registry>
+  </syscheck>
+  ============================================================================
+-->

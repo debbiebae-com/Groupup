@@ -1,0 +1,48 @@
+<!--
+  ============================================================================
+  Active Response — automatically block a brute-forcing source IP
+  ============================================================================
+  Paste inside the <ossec_config> block of the MANAGER configuration:
+
+      /var/ossec/etc/ossec.conf
+
+  Then restart:
+      sudo systemctl restart wazuh-manager
+
+  What it does
+  ============
+  When rule 100100 or 5763 fires (SSH brute force), the manager instructs
+  the AGENT to run the `firewall-drop` binary locally. The offending IP is
+  blocked at the endpoint for 180 seconds.
+
+  ⚠  Lab use only. If you attack from your own management IP you will lock
+     yourself out of SSH. Recover with the VM console, or:
+         sudo iptables -F
+         sudo systemctl restart wazuh-agent
+
+  Verify the command exists on the endpoint:
+      ls /var/ossec/active-response/bin/firewall-drop
+  ============================================================================
+-->
+
+<active-response>
+  <command>firewall-drop</command>
+  <location>local</location>
+  <rules_id>100100,5763</rules_id>
+  <timeout>180</timeout>
+</active-response>
+
+<!--
+  ============================================================================
+  OPTIONAL — audit which IPs get blocked
+  ============================================================================
+  Blocked-IP events surface in the dashboard as rule 651 / 652
+  ("Host blocked by firewall-drop" / "Host Unblocked"). Filter with:
+
+      rule.groups:active_response
+
+  To see the block list on the endpoint:
+
+      sudo iptables -L INPUT -n ==line-numbers | grep DROP
+  ============================================================================
+-->
