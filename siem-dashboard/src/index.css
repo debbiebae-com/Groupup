@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-base font-sans text-bright antialiased;
+  background-image:
+    radial-gradient(900px 500px at 10% -10%, rgba(34, 211, 238, 0.07), transparent 60%),
+    radial-gradient(700px 420px at 95% 0%, rgba(59, 130, 246, 0.05), transparent 55%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.25);
+  color: #f4faff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e2a3d;
+  border: 2px solid #06080d;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3a52;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.6);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-xl border border-edge/80 bg-surface/90 shadow-panel backdrop-blur-sm;
+  }
+
+  .label-caps {
+    @apply text-[10px] font-semibold uppercase tracking-[0.16em] text-muted;
+  }
+
+  .num {
+    @apply font-mono tabular-nums;
+  }
+
+  .table-row {
+    @apply border-b border-edge/50 transition-colors hover:bg-surface-3/60;
+  }
+
+  .input-base {
+    @apply h-9 rounded-lg border border-edge bg-surface-2 px-3 text-[13px] text-bright placeholder:text-muted/60 transition-colors focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/15;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #1e2a3d transparent;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.recharts-cartesian-axis-tick-value {
+  fill: #7d8fa8;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.recharts-surface {
+  overflow: visible;
+}
